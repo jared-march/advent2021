@@ -1,13 +1,11 @@
-(defun ignore-commas (stream char)
-  (declare (ignore stream char))
+(defun nop (&rest ignored)
+  (declare (ignore ignored))
   (values))
 
 (defun read-numbers (stream)
   (let ((*readtable* (copy-readtable)))
-    (set-macro-character #\, #'ignore-commas)
-    (loop for num = (read stream nil)
-          while num
-          collect num)))
+    (set-macro-character #\, #'nop)
+    (loop for num = (read stream nil) while num collect num)))
 
 (defun difference (number-1 number-2)
   (abs (- number-1 number-2)))
@@ -22,11 +20,9 @@
          (range-min (reduce #'min positions))
          (range-max (reduce #'max positions)))
     (reduce #'min
-            (loop
-              for i from range-min to range-max
-              collect (reduce #'+ (mapcar (lambda (p) (difference p i))
-                                         positions))))))
-
+            (loop for i from range-min to range-max
+                  collect (reduce #'+ (mapcar (lambda (p) (difference p i))
+                                              positions))))))
 
 (defun advent-7-2 ()
   (let* ((positions (with-open-file (stream "../input/7/input")
@@ -34,7 +30,6 @@
          (range-min (reduce #'min positions))
          (range-max (reduce #'max positions)))
     (reduce #'min
-            (loop
-              for i from range-min to range-max
-              collect (reduce #'+ (mapcar (lambda (p) (increasing-difference p i))
-                                         positions))))))
+            (loop for i from range-min to range-max
+                  collect (reduce #'+ (mapcar (lambda (p) (increasing-difference p i))
+                                              positions))))))
